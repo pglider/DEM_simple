@@ -4,6 +4,8 @@
 int main(){
     
     printf("Parameters : N = %d, R = %f, M = %f, KL = %f, ETA = %f\n", N, R, M, KL, ETA);
+    tcoll = 2*M*3.14/sqrt(4*KL*M - ETA*ETA);
+    printf("Check : tcoll = %e = %f DT, e = %f\n",tcoll,tcoll/(double)(DT),exp(-ETA/(2*M) * tcoll));
     
     //Create output directory
     system("if exist out rd /s /q out");

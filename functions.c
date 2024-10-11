@@ -2,6 +2,7 @@
 
 void init(){
     int i;
+    double r_poly;
     //Bottom grains
     for(i=0;i<NB;i++){
         disk[i].x = i * 2 * R * 1.1;
@@ -24,9 +25,10 @@ void init(){
         disk[i].x = (NB-1) * R * 1.1;//Middle of the bottom grains
         disk[i].y = Y0 * R;//Initial height
         disk[i].Oz = 0.;
-        disk[i].r = R;
-        disk[i].mass = M;
-        disk[i].inertia = 2./5 * M * R * R;
+        r_poly = 1. + 0.2 * ((double) rand()/RAND_MAX-0.5);//20% polydispersity
+        disk[i].r = R * r_poly;
+        disk[i].mass = M * r_poly * r_poly * r_poly;
+        disk[i].inertia = 2./5 * M * R * R * r_poly * r_poly * r_poly * r_poly * r_poly;
         disk[i].fixed=0;
         disk[i].active=0;
         disk[i].yold=disk[i].y;
@@ -184,47 +186,47 @@ int createps(int ieps){
     double xref,yref;// Reference position for the grains
     int i;// Counter for the grains
     sprintf(name,"out\\p%.5d.eps",ieps);
-    pos_eps=fopen(name,"w");
-    if(pos_eps==NULL){
+    eps_file=fopen(name,"w");
+    if(eps_file==NULL){
         printf("Error opening file %s\n",name);
         return -1;
     }
 
     // Header
-    fprintf(pos_eps,"%%!PS-Adobe-3.0 EPSF-3.0\n");
-    fprintf(pos_eps,"%%");
-    fprintf(pos_eps,"%%BoundingBox: 0 0 %d %d\n", (int)(2*(NB-1)*1.1*R*SCALE), (int)((Y0+2)*R*SCALE));
-    fprintf(pos_eps,"%%");
-    fprintf(pos_eps,"%%EndComments \n");
+    fprintf(eps_file,"%%!PS-Adobe-3.0 EPSF-3.0\n");
+    fprintf(eps_file,"%%");
+    fprintf(eps_file,"%%BoundingBox: 0 0 %d %d\n", (int)(2*(NB-1)*1.1*R*SCALE), (int)((Y0+2)*R*SCALE));
+    fprintf(eps_file,"%%");
+    fprintf(eps_file,"%%EndComments \n");
 
     // Shortcuts
-    fprintf(pos_eps,"/M{moveto}def\n");				// Move to
-    fprintf(pos_eps,"/L{lineto stroke}def\n");			// Line to
-    fprintf(pos_eps,"/D{1 1 sethsbcolor newpath 0 360 arc closepath gsave 0 setgray grestore fill stroke}def\n");//Draw disk
-    fprintf(pos_eps,"/G{0 0 0.5 sethsbcolor newpath 0 360 arc closepath gsave 0 setgray grestore fill stroke}def\n");//Draw gray disk
-    fprintf(pos_eps,"/C{0 0 0 sethsbcolor newpath 0 360 arc closepath stroke}def\n");//Draw circle
+    fprintf(eps_file,"/M{moveto}def\n");				// Move to
+    fprintf(eps_file,"/L{lineto stroke}def\n");			// Line to
+    fprintf(eps_file,"/D{1 1 sethsbcolor newpath 0 360 arc closepath gsave 0 setgray grestore fill stroke}def\n");//Draw disk
+    fprintf(eps_file,"/G{0 0 0.5 sethsbcolor newpath 0 360 arc closepath gsave 0 setgray grestore fill stroke}def\n");//Draw gray disk
+    fprintf(eps_file,"/C{0 0 0 sethsbcolor newpath 0 360 arc closepath stroke}def\n");//Draw circle
     
-    fprintf(pos_eps,"1 setlinewidth\n");
+    fprintf(eps_file,"1 setlinewidth\n");
     
     for(i=0;i<=N;i++){		
         xref=disk[i].x;
         yref=disk[i].y;
         if(disk[i].fixed==1){
-            fprintf(pos_eps,"\n %f %f %f %f D", xref*SCALE, yref*SCALE, disk[i].r*SCALE, 0.4);            
-            fprintf(pos_eps,"\n %f %f %f C", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
+            fprintf(eps_file,"\n %f %f %f %f D", xref*SCALE, yref*SCALE, disk[i].r*SCALE, 0.4);            
+            fprintf(eps_file,"\n %f %f %f C", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
         }
         else{
             if(disk[i].active==1){
-                fprintf(pos_eps,"\n %f %f %f %f D", xref*SCALE, yref*SCALE, disk[i].r*SCALE, 0.8);
-                fprintf(pos_eps,"\n %f %f %f C", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
+                fprintf(eps_file,"\n %f %f %f %f D", xref*SCALE, yref*SCALE, disk[i].r*SCALE, 0.8);
+                fprintf(eps_file,"\n %f %f %f C", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
                 // Draw line showing orientation
-                fprintf(pos_eps,"\n %f %f M %f %f L", xref*SCALE, yref*SCALE,(xref + disk[i].r * cos(disk[i].Oz))*SCALE, (yref + disk[i].r * sin(disk[i].Oz))*SCALE);
+                fprintf(eps_file,"\n %f %f M %f %f L", xref*SCALE, yref*SCALE,(xref + disk[i].r * cos(disk[i].Oz))*SCALE, (yref + disk[i].r * sin(disk[i].Oz))*SCALE);
             }
             else{
-                fprintf(pos_eps,"\n %f %f %f G", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
+                fprintf(eps_file,"\n %f %f %f G", xref*SCALE, yref*SCALE, disk[i].r*SCALE);
             }
         }
     }
-    fclose(pos_eps);
+    fclose(eps_file);
     return 1;
 }
