@@ -19,18 +19,20 @@
 #define ELL 0.5         //Elastic restitution
 #define ETA (double)(-2*log(ELL)*sqrt(M*KL)/sqrt(log(ELL)*log(ELL)+PI*PI)) //DAMPING
 #define MAXCONTACTS 6   //Maximum number of contacts
+#define POLYDISP 0.2    //Polydispersity : 0.2 -> 20% of polydispersity (grains have a radius between 0.9R and 1.1R)
 
 //Simulation parameters
 #define N 300            //Total grains in simulation
 #define NB 60           //Bottom grains
-#define MAX_TIME 2000000    //Number of iterations
+#define MAX_TIME 200000    //Number of iterations
 #define DT (double)(0.05*2*sqrt(M/KL)) //Time step
 #define ACTIVATION_STEP 6000 //Number of iterations before activating the next grain
 #define Y0 33         //Initial height of the added grains, in number of radii
 
 //Postscript parameters
-#define EPS_STEP 24000     //Number of iterations before creating a new eps file
-#define SCALE 30000      //Scale for the eps file
+#define EPS_STEP 200      //Number of iterations before creating a new eps file
+#define EPS_START 180000		//Iteration at which the eps files start being created
+#define SCALE 30000         //Scale for the eps file
 
 //Declare functions
 void init();

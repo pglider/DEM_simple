@@ -25,7 +25,7 @@ void init(){
         disk[i].x = (NB-1) * R * 1.1;//Middle of the bottom grains
         disk[i].y = Y0 * R;//Initial height
         disk[i].Oz = 0.;
-        r_poly = 1. + 0.2 * ((double) rand()/RAND_MAX-0.5);//20% polydispersity
+        r_poly = 1. + 2 * POLYDISP * ((double) rand()/RAND_MAX-0.5);//polydispersity
         disk[i].r = R * r_poly;
         disk[i].mass = M * r_poly * r_poly * r_poly;
         disk[i].inertia = 2./5 * M * R * R * r_poly * r_poly * r_poly * r_poly * r_poly;
