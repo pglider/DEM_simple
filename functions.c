@@ -25,7 +25,7 @@ void init(){
         disk[i].x = (NB-1) * R * 1.1;//Middle of the bottom grains
         disk[i].y = Y0 * R;//Initial height
         disk[i].Oz = 0.;
-        r_poly = 1. + 2 * POLYDISP * ((double) rand()/RAND_MAX-0.5);//polydispersity
+        r_poly = 1. + POLYDISP * ((double) rand()/RAND_MAX-0.5);//polydispersity
         disk[i].r = R * r_poly;
         disk[i].mass = M * r_poly * r_poly * r_poly;
         disk[i].inertia = 2./5 * M * R * R * r_poly * r_poly * r_poly * r_poly * r_poly;
@@ -49,6 +49,17 @@ void collision(){
 
     for (i = 0; i < N; i++) {
         if (disk[i].active == 1) {
+            
+            //Update the contacts
+            for(contact_index=0;contact_index<MAXCONTACTS;contact_index++){
+                disk[i].contactsold[contact_index]=disk[i].contacts[contact_index];//Store previous contacts
+                disk[i].contacts[contact_index]=-1;//set all contacts to -1 (no contact)
+                disk[i].utxold[contact_index]=disk[i].utx[contact_index];//Store previous utx
+                disk[i].utyold[contact_index]=disk[i].uty[contact_index];//Store previous uty
+                disk[i].utx[contact_index]=0.;//Reset utx
+                disk[i].uty[contact_index]=0.;//Reset uty
+            }
+
             for (j = i + 1; j < N; j++) {
                 if (disk[j].active == 1) {
 
@@ -128,6 +139,10 @@ void collision(){
                         disk[j].fx+=-fn*nx-ftx;
                         disk[j].fy+=-fn*ny-fty;
                         disk[j].Mz+= disk[j].r * (nx*fty-ny*ftx);
+
+                        // Update the contact integrals
+                        disk[i].utxold[current_contact]=disk[i].utx[current_contact];
+                        disk[i].utyold[current_contact]=disk[i].uty[current_contact];
 
                     }
                 }
