@@ -45,7 +45,7 @@ int main(){
         //Integrate the equations of motion
         newton_second_law();
 
-        if(t%EPS_STEP==0){
+        if(t%EPS_STEP==0&&t>EPS_START){
             printf("Creating eps file %d (%.2f%%)\n",eps_count,100.*t/MAX_TIME);
             r=createps(eps_count);
             if(r==1){
