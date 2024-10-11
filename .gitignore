@@ -4,3 +4,4 @@ out/
 # Ignore executable files
 *.exe
 *.out
+*.avi
